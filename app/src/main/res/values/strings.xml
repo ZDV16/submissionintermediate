@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">SubmissionIntermediate</string>
+    <string name="title_activity_login">LoginActivity</string>
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password</string>
+    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="welcome">"Welcome !"</string>
+    <string name="invalid_username">Not a valid username</string>
+    <string name="invalid_password">Password must be >5 characters</string>
+    <string name="login_failed">"Login failed"</string>
+    <string name="coders_story">Coders Story</string>
+    <string name="logo">Logo</string>
+    <string name="desc">Where programmers share their story, share their lifestyle, share their code. Lets join the fun!</string>
+    <string name="login">LOGIN</string>
+    <string name="sign_up">SIGN UP</string>
+</resources>
