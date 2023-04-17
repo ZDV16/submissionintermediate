@@ -2,6 +2,7 @@ package com.example.submissionintermediate.register
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.viewModels
 import com.example.submissionintermediate.R
 import com.example.submissionintermediate.databinding.ActivityMainBinding
@@ -20,16 +21,13 @@ class RegisterActivity : AppCompatActivity() {
 
         binding.btnReg.setOnClickListener {
             registerClicked()
-            println("ANJING")
         }
 
     }
 
     private fun registerClicked(){
-        viewModel.userRegister.observe(this) {
-        viewModel.addUser(binding.etNama.toString(),binding.etEmail.toString(),binding.etPassword.toString())
-
-        }
-
-    }
+        viewModel.addUser(binding.etNama.text.toString(),binding.etEmail.text.toString(),binding.etPassword.text.toString())
+       println("ANJ")
+        println(viewModel.hasil.value.toString())
+}
 }
