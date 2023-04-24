@@ -3,7 +3,7 @@ package com.example.submissionintermediate.api
 
 data class RegisterResponse(
     val registerItem: List<RegisterItem>,
-    val error: String,
+    val error: Boolean,
     val message:String
 )
 

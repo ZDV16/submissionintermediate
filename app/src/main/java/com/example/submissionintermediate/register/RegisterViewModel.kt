@@ -31,6 +31,7 @@ class RegisterViewModel : ViewModel() {
     private val _hasil = MutableLiveData<Boolean>()
     val hasil: LiveData<Boolean> = _hasil
 
+    var hasil1: Boolean = true
 
     fun addUser(name: String, email: String, password: String) {
         _isLoading.value = true
@@ -42,15 +43,15 @@ class RegisterViewModel : ViewModel() {
             ) {
                 _isLoading.value = false
                 if (response.isSuccessful) {
-                    _hasil.value = true
+                    hasil1 = false
                     _userRegister.value = response.body()?.registerItem
                 } else {
-                    _hasil.value = false
+                    hasil1 = true
                     Log.e(TAG, "onFailure: ${response.message()}")
                 }
             }
             override fun onFailure(call: Call<RegisterResponse>, t: Throwable) {
-                _hasil.value = false
+                hasil1 = true
                 _isLoading.value = false
                 Log.e(TAG, "onFailure: ${t.message.toString()}")
             }
