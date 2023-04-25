@@ -24,8 +24,8 @@ class LoginViewModel(private val pref: UserPreferences) : ViewModel() {
     private val _userLogin = MutableLiveData<LoginResult>()
     val userLogin: LiveData<LoginResult> = _userLogin
 
-    private val _token = MutableLiveData<String?>()
-    val token: LiveData<String?> = _token
+    private val _token = MutableLiveData<String>()
+    val token: LiveData<String> = _token
 
     private val _hasil = MutableLiveData<Boolean>()
     val hasil: LiveData<Boolean> = _hasil
@@ -34,26 +34,33 @@ class LoginViewModel(private val pref: UserPreferences) : ViewModel() {
     fun pressLogin(email: String, password: String) {
         _isLoading.value = true
         val userSelect = ApiConfig.getApiService().postLogin(email, password)
-        userSelect.enqueue(object : Callback<LoginResult> {
+        userSelect.enqueue(object : Callback<LoginResponse> {
             override fun onResponse(
-                call: Call<LoginResult>,
-                response: Response<LoginResult>
+                call: Call<LoginResponse>,
+                response: Response<LoginResponse>
             ) {
                 _isLoading.value = false
                 if (response.isSuccessful) {
                     _hasil.postValue(true)
-                    _userLogin.value = response.body()
+                    _userLogin.postValue(response.body()?.loginResult)
+                    _token.postValue(response.body()?.loginResult?.token)
                 } else {
-
+                    _hasil.postValue(false)
                     Log.e(ContentValues.TAG, "onFailure: ${response.message()}")
                 }
             }
-            override fun onFailure(call: Call<LoginResult>, t: Throwable) {
+            override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
                 Log.e(ContentValues.TAG, "onFailure: ${t.message.toString()}")
             }
         })
     }
+
     fun getUser(): LiveData<UserModel> {
         return pref.getUser().asLiveData()
+    }
+    fun saveUser(userModel: UserModel) {
+        viewModelScope.launch {
+        pref.saveUser(userModel)
+        }
     }
 }

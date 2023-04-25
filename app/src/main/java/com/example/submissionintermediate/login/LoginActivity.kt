@@ -1,25 +1,28 @@
 package com.example.submissionintermediate.login
 
+import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.viewModels
-import androidx.lifecycle.lifecycleScope
-import com.example.submissionintermediate.R
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStore
 import com.example.submissionintermediate.databinding.ActivityLoginBinding
-import com.example.submissionintermediate.databinding.ActivityMainBinding
 import com.example.submissionintermediate.main.MainActivity
-import com.example.submissionintermediate.register.RegisterViewModel
 import com.example.submissionintermediate.settings.UserModel
 import com.example.submissionintermediate.settings.UserPreferences
-import com.example.submissionintermediate.welcome.WelcomeActivity
-import kotlinx.coroutines.Job
-import okhttp3.internal.wait
+import com.example.submissionintermediate.settings.ViewModelFactory
+
+private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
 
 class LoginActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding
-    private val viewModel by viewModels<LoginViewModel>()
+    private val pref by lazy { UserPreferences.getInstance(dataStore) }
+    private val viewModel: LoginViewModel by viewModels {
+        ViewModelFactory(pref)
+    }
     private lateinit var user: UserModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -27,14 +30,18 @@ class LoginActivity : AppCompatActivity() {
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        viewModel.getUser().observe(this) {
-                user-> this.user
-        }
+        setUserModel()
 
         binding.button.setOnClickListener {
             loginClicked()
         }
+    }
 
+
+    private fun setUserModel(){
+        viewModel.getUser().observe(this) {user ->
+            this.user = user
+        }
     }
     private fun loginClicked() {
         viewModel.pressLogin(
@@ -42,15 +49,25 @@ class LoginActivity : AppCompatActivity() {
             binding.etPasswordLogin.text.toString()
         )
         viewModel.hasil.observe(this) {
-            if(it){
+            if (it) {
                 Toast.makeText(this, "LOGIN SUCCESS", Toast.LENGTH_SHORT).show()
-                user.token = viewModel.token.toString()
-                user.isLogin = true
-                println(user.token)
-                startActivity(Intent(this, MainActivity::class.java))
-            }else{
+                  getToken()
+                val mainPage = Intent(this@LoginActivity, MainActivity::class.java)
+                startActivity(mainPage)
+            } else {
                 Toast.makeText(this, "LOGIN FAILED", Toast.LENGTH_SHORT).show()
             }
+
+
         }
     }
+
+    private fun getToken() {
+        viewModel.token.observe(this) {
+           user.token = it
+           user.isLogin = true
+            }
+        }
 }
+
+
