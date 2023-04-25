@@ -67,6 +67,7 @@ class LoginActivity : AppCompatActivity() {
            user.token = it
            user.isLogin = true
             }
+        viewModel.saveUser(user)
         }
 }
 
