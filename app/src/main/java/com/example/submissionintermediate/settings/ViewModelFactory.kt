@@ -6,6 +6,7 @@ import com.example.submissionintermediate.addStory.AddStoryViewModel
 import com.example.submissionintermediate.detail.DetailViewModel
 import com.example.submissionintermediate.login.LoginViewModel
 import com.example.submissionintermediate.main.MainViewModel
+import com.example.submissionintermediate.maps.MapsViewModel
 import com.example.submissionintermediate.options.OptionsViewModel
 
 class ViewModelFactory(private val pref: UserPreferences) : ViewModelProvider.NewInstanceFactory() {
@@ -27,6 +28,9 @@ class ViewModelFactory(private val pref: UserPreferences) : ViewModelProvider.Ne
             }
             modelClass.isAssignableFrom(AddStoryViewModel::class.java) -> {
                 AddStoryViewModel(pref) as T
+            }
+            modelClass.isAssignableFrom(MapsViewModel::class.java) -> {
+                MapsViewModel(pref) as T
             }
             else -> throw IllegalArgumentException("Unknown ViewModel class: " + modelClass.name)
         }
