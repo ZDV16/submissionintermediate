@@ -6,13 +6,11 @@ import android.graphics.drawable.Drawable
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.AttributeSet
-import android.util.Patterns
 import android.view.MotionEvent
 import android.view.View
 import androidx.appcompat.widget.AppCompatEditText
 import androidx.core.content.ContextCompat
 import com.example.submissionintermediate.R
-import com.example.submissionintermediate.register.RegisterActivity
 
 class EditTextName : AppCompatEditText, View.OnTouchListener {
 
@@ -84,7 +82,6 @@ class EditTextName : AppCompatEditText, View.OnTouchListener {
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        hint = "Masukkan Nama Anda"
         textAlignment = View.TEXT_ALIGNMENT_VIEW_START
     }
 }

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">SubmissionIntermediate</string>
+    <string name="title_activity_login">LoginActivity</string>
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Kata Sandi</string>
+    <string name="action_sign_in">Masuk atau Daftar</string>
+    <string name="action_sign_in_short">Masuk</string>
+    <string name="welcome">"Selamat Datang"</string>
+    <string name="invalid_username">Not a valid username</string>
+    <string name="invalid_password">Kata sandi minimal 8 karakter </string>
+    <string name="login_failed">"Login gagal"</string>
+    <string name="coders_story">Coders Story</string>
+    <string name="logo">Logo</string>
+    <string name="desc">Di mana programmer berbagi cerita mereka, berbagi gaya hidup mereka, berbagi kode mereka. Mari bergabung dengan kesenangan!</string>
+    <string name="login">MASUK</string>
+    <string name="sign_up">DAFTAR</string>
+    <string name="camera">kamera</string>
+    <string name="gallery">galeri</string>
+    <string name="story_description">Deskripsi Cerita</string>
+    <string name="upload">unggah</string>
+    <string name="password">Kata Sandi</string>
+    <string name="language">Bahasa</string>
+    <string name="logout">Keluar</string>
+    <string name="join_the_fun">Bergabung</string>
+    <string name="name">Nama</string>
+    <string name="email">Email</string>
+    <string name="confirm">ya</string>
+    <string name="negative">tidak</string>
+    <string name="popUp">Mau keluar?</string>
+    <string name="regYes">REGISTRASI SUKSES</string>
+    <string name="regNo">REGISTRASI GAGAL</string>
+    <string name="loginYes">MASUK SUKSES</string>
+    <string name="loginNo">MASUK GAGAL</string>
+    <string name="uploadYes">UNGGAH SUKSES</string>
+    <string name="uploadNo">UNGGAH GAGAL, TIDAK ADA FOTO</string>
+    <string name="etName">Nama Anda</string>
+    <string name="etEmail">Email Anda</string>
+    <string name="etPassword">Setidaknya 8 karakter</string>
+    <string name="errorPassword">Password setidaknya 8 karakter</string>
+    <string name="errorDesc">Deskripsi tidak boleh kosong</string>
+</resources>

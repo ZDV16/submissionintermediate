@@ -3,9 +3,10 @@ package com.example.submissionintermediate.welcome
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import com.example.submissionintermediate.databinding.ActivityWelcomeBinding
 import com.example.submissionintermediate.login.LoginActivity
 import com.example.submissionintermediate.register.RegisterActivity
@@ -13,15 +14,16 @@ import com.example.submissionintermediate.register.RegisterActivity
 class WelcomeActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityWelcomeBinding
-
+    var backPressedTime: Long = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityWelcomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-    playAnimation()
-    intent()
+        playAnimation()
+        intent()
+        supportActionBar?.hide()
     }
 
     private fun playAnimation() {
@@ -46,7 +48,8 @@ class WelcomeActivity : AppCompatActivity() {
             start()
         }
     }
-    private fun intent(){
+
+    private fun intent() {
         binding.btnLogin.setOnClickListener {
             val loginPage = Intent(this@WelcomeActivity, LoginActivity::class.java)
             startActivity(loginPage)
@@ -55,5 +58,15 @@ class WelcomeActivity : AppCompatActivity() {
             val registerPage = Intent(this@WelcomeActivity, RegisterActivity::class.java)
             startActivity(registerPage)
         }
+    }
+
+    override fun onBackPressed() {
+        if (backPressedTime + 3000 > System.currentTimeMillis()) {
+            super.onBackPressed()
+            finish()
+        } else {
+            Toast.makeText(this, "Press back again to leave the app.", Toast.LENGTH_LONG).show()
+        }
+        backPressedTime = System.currentTimeMillis()
     }
 }

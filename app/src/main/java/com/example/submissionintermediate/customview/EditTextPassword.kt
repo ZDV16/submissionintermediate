@@ -12,7 +12,7 @@ import androidx.appcompat.widget.AppCompatEditText
 import androidx.core.content.ContextCompat
 import com.example.submissionintermediate.R
 
-class EditTextPassword: AppCompatEditText, View.OnTouchListener {
+class EditTextPassword : AppCompatEditText, View.OnTouchListener {
 
     private lateinit var clearButtonImage: Drawable
 
@@ -45,7 +45,7 @@ class EditTextPassword: AppCompatEditText, View.OnTouchListener {
             }
 
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                if (s.length<7) showClearButton() else hideClearButton()
+                if (s.length < 8) showClearButton() else hideClearButton()
             }
 
             override fun afterTextChanged(s: Editable) {
@@ -82,7 +82,6 @@ class EditTextPassword: AppCompatEditText, View.OnTouchListener {
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        hint = "Minimal 8 karakter"
         textAlignment = View.TEXT_ALIGNMENT_VIEW_START
     }
 }

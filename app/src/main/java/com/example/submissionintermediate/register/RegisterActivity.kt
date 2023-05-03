@@ -1,16 +1,12 @@
 package com.example.submissionintermediate.register
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
+import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import com.example.submissionintermediate.R
-import com.example.submissionintermediate.customview.EditTextEmail
-import com.example.submissionintermediate.databinding.ActivityMainBinding
 import com.example.submissionintermediate.databinding.ActivityRegisterBinding
-import com.example.submissionintermediate.databinding.ActivityWelcomeBinding
 
 
 class RegisterActivity : AppCompatActivity() {
@@ -24,21 +20,34 @@ class RegisterActivity : AppCompatActivity() {
 
         binding.btnReg.setOnClickListener {
             registerClicked()
-            Toast.makeText(
-                this, if (viewModel.hasil1) {
-                    "REGISTRATION FAILED"
-                } else {
-                    "REGISTRATION SUCCESS"
-                }, Toast.LENGTH_LONG
-            ).show()
         }
+
+        viewModel.isLoading.observe(this) {
+            showLoading(it)
+        }
+        supportActionBar?.hide()
     }
 
     private fun registerClicked() {
-        viewModel.addUser(
-            binding.etNama.text.toString(),
-            binding.etEmail.text.toString(),
-            binding.etPassword.text.toString()
-        )
+        if (binding.etPassword.text?.length!! < 8) {
+            Toast.makeText(this, R.string.errorPassword, Toast.LENGTH_SHORT).show()
+        } else {
+            viewModel.addUser(
+                binding.etNama.text.toString(),
+                binding.etEmail.text.toString(),
+                binding.etPassword.text.toString()
+            )
+            viewModel.hasil.observe(this) {
+                if (it) {
+                    Toast.makeText(this, R.string.regYes, Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(this, R.string.regNo, Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+
+    private fun showLoading(isLoading: Boolean) {
+        binding.progressBar2.visibility = if (isLoading) View.VISIBLE else View.GONE
     }
 }

@@ -1,17 +1,14 @@
 package com.example.submissionintermediate.login
 
 import android.content.ContentValues
-import android.content.Context
 import android.util.Log
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.preferencesDataStore
 import androidx.lifecycle.*
-import com.example.submissionintermediate.api.*
+import com.example.submissionintermediate.api.ApiConfig
+import com.example.submissionintermediate.api.LoginResponse
+import com.example.submissionintermediate.api.LoginResult
 import com.example.submissionintermediate.settings.UserModel
 import com.example.submissionintermediate.settings.UserPreferences
 import kotlinx.coroutines.launch
-import okhttp3.internal.wait
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -29,7 +26,7 @@ class LoginViewModel(private val pref: UserPreferences) : ViewModel() {
 
     private val _hasil = MutableLiveData<Boolean>()
     val hasil: LiveData<Boolean> = _hasil
-    
+
 
     fun pressLogin(email: String, password: String) {
         _isLoading.value = true
@@ -49,6 +46,7 @@ class LoginViewModel(private val pref: UserPreferences) : ViewModel() {
                     Log.e(ContentValues.TAG, "onFailure: ${response.message()}")
                 }
             }
+
             override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
                 Log.e(ContentValues.TAG, "onFailure: ${t.message.toString()}")
             }
@@ -58,9 +56,10 @@ class LoginViewModel(private val pref: UserPreferences) : ViewModel() {
     fun getUser(): LiveData<UserModel> {
         return pref.getUser().asLiveData()
     }
+
     fun saveUser(userModel: UserModel) {
         viewModelScope.launch {
-        pref.saveUser(userModel)
+            pref.saveUser(userModel)
         }
     }
 }

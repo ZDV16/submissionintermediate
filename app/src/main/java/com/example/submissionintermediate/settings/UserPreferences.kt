@@ -14,11 +14,12 @@ class UserPreferences private constructor(private val dataStore: DataStore<Prefe
     fun getUser(): Flow<UserModel> {
         return dataStore.data.map { preferences ->
             UserModel(
-                preferences[TOKEN_KEY] ?:"",
+                preferences[TOKEN_KEY] ?: "",
                 preferences[STATE_KEY] ?: false
             )
         }
     }
+
 
     suspend fun saveUser(user: UserModel) {
         dataStore.edit { preferences ->
@@ -28,8 +29,9 @@ class UserPreferences private constructor(private val dataStore: DataStore<Prefe
     }
 
 
-    suspend fun logout() {
+    suspend fun logout(user: UserModel) {
         dataStore.edit { preferences ->
+            preferences[TOKEN_KEY] = ""
             preferences[STATE_KEY] = false
         }
     }
@@ -41,7 +43,7 @@ class UserPreferences private constructor(private val dataStore: DataStore<Prefe
         private val TOKEN_KEY = stringPreferencesKey("token")
         private val STATE_KEY = booleanPreferencesKey("state")
 
-        fun getInstance(dataStore: DataStore<androidx.datastore.preferences.core.Preferences>): UserPreferences {
+        fun getInstance(dataStore: DataStore<Preferences>): UserPreferences {
             return INSTANCE ?: synchronized(this) {
                 val instance = UserPreferences(dataStore)
                 INSTANCE = instance
