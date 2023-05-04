@@ -4,19 +4,16 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
+import com.example.submissionintermediate.data.StoryRepository
 import com.example.submissionintermediate.settings.UserModel
 import com.example.submissionintermediate.settings.UserPreferences
 import kotlinx.coroutines.launch
 
-class OptionsViewModel(private val pref: UserPreferences) : ViewModel() {
+class OptionsViewModel(private val repo: StoryRepository) : ViewModel() {
 
-    fun logout(userModel: UserModel) {
+    fun logout() {
         viewModelScope.launch {
-            pref.logout(userModel)
+            repo.logout()
         }
-    }
-
-    fun getUser(): LiveData<UserModel> {
-        return pref.getUser().asLiveData()
     }
 }

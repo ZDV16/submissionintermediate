@@ -10,8 +10,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
+import androidx.lifecycle.ViewModelProvider
+import com.example.submissionintermediate.R
+import com.example.submissionintermediate.api.LoginRequest
 import com.example.submissionintermediate.databinding.ActivityLoginBinding
 import com.example.submissionintermediate.main.MainActivity
+import com.example.submissionintermediate.settings.ApiResult
 import com.example.submissionintermediate.settings.UserModel
 import com.example.submissionintermediate.settings.UserPreferences
 import com.example.submissionintermediate.settings.ViewModelFactory
@@ -20,63 +24,58 @@ private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(na
 
 class LoginActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding
-    private val pref by lazy { UserPreferences.getInstance(dataStore) }
-    private val viewModel: LoginViewModel by viewModels {
-        ViewModelFactory(pref)
-    }
-    private lateinit var user: UserModel
+    private lateinit var viewModel: LoginViewModel
+    private lateinit var factory: ViewModelFactory
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        setUserModel()
+        factory = ViewModelFactory.getInstance(this)
+        viewModel = ViewModelProvider(this, factory)[LoginViewModel::class.java]
 
         binding.button.setOnClickListener {
             loginClicked()
         }
 
-        viewModel.isLoading.observe(this) {
-            showLoading(it)
-        }
 
         supportActionBar?.hide()
     }
-
-
-    private fun setUserModel() {
-        viewModel.getUser().observe(this) { user ->
-            this.user = user
-        }
-    }
-
     private fun loginClicked() {
-        viewModel.pressLogin(
-            binding.etUsernameLogin.text.toString(),
-            binding.etPasswordLogin.text.toString()
-        )
-        viewModel.hasil.observe(this) {
-            if (it) {
-                Toast.makeText(this, "LOGIN SUCCESS", Toast.LENGTH_SHORT).show()
-                getToken()
-                val mainPage = Intent(this@LoginActivity, MainActivity::class.java)
-                startActivity(mainPage)
-                finish()
-            } else {
-                Toast.makeText(this, "LOGIN FAILED", Toast.LENGTH_SHORT).show()
+        val creds = LoginRequest(binding.etUsernameLogin.text.toString(),
+        binding.etPasswordLogin.text.toString())
+        showLoading(true)
+
+        viewModel.goLogin(creds).observe(this) {
+            when (it) {
+                is ApiResult.Success -> {
+                    showLoading(false)
+                    Toast.makeText(this, R.string.loginYes, Toast.LENGTH_SHORT).show()
+                    val response = it.data
+                    saveUserData(UserModel(
+                        response.loginResult?.token.toString(),
+                        true
+                        ))
+                    val mainPage = Intent(this@LoginActivity, MainActivity::class.java)
+                    startActivity(mainPage)
+                    finish()
+                }
+                is ApiResult.Loading -> showLoading(true)
+                is ApiResult.Error -> {
+                    Toast.makeText(this, R.string.loginNo, Toast.LENGTH_SHORT).show()
+                    showLoading(false)
+                }
+                else -> {
+                    Toast.makeText(this, R.string.errorsys, Toast.LENGTH_SHORT).show()
+                    showLoading(false)
+                }
             }
-
-
         }
     }
 
-    private fun getToken() {
-        viewModel.token.observe(this) {
-            user.token = it
-            user.isLogin = true
-        }
-        viewModel.saveUser(user)
+    private fun saveUserData(user: UserModel) {
+       viewModel.saveUser(user)
     }
 
     private fun showLoading(isLoading: Boolean) {

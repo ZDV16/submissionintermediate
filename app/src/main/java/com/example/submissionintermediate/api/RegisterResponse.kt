@@ -12,3 +12,9 @@ data class RegisterItem(
     val email: String,
     val password: String
 )
+
+data class RegisterRequest(
+    val name: String? = null,
+    val email: String? = null,
+    val password: String? = null
+)

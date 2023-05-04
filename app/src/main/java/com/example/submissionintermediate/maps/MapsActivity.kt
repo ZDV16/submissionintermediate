@@ -3,11 +3,15 @@ package com.example.submissionintermediate.maps
 import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
+import androidx.lifecycle.ViewModelProvider
 import com.example.submissionintermediate.R
+import com.example.submissionintermediate.addStory.AddStoryViewModel
+import com.example.submissionintermediate.api.ListStoryItem
 
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -16,6 +20,8 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.example.submissionintermediate.databinding.ActivityMapsBinding
+import com.example.submissionintermediate.main.MainViewModel
+import com.example.submissionintermediate.settings.ApiResult
 import com.example.submissionintermediate.settings.UserModel
 import com.example.submissionintermediate.settings.UserPreferences
 import com.example.submissionintermediate.settings.ViewModelFactory
@@ -27,11 +33,9 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private lateinit var mMap: GoogleMap
     private lateinit var binding: ActivityMapsBinding
-    private val pref by lazy { UserPreferences.getInstance(dataStore) }
-    private val viewModel: MapsViewModel by viewModels {
-        ViewModelFactory(pref)
-    }
-    private lateinit var user: UserModel
+    private lateinit var viewModel : MapsViewModel
+    private lateinit var addviewModel : AddStoryViewModel
+    private lateinit var factory : ViewModelFactory
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,19 +43,19 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         binding = ActivityMapsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        setUserModel()
+        factory = ViewModelFactory.getInstance(this)
+
+        viewModel = ViewModelProvider(this, factory)[MapsViewModel::class.java]
+        addviewModel = ViewModelProvider(this, factory)[AddStoryViewModel::class.java]
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
+
+        supportActionBar?.hide()
     }
 
-    private fun setUserModel() {
-        viewModel.getUser().observe(this) { user ->
-            this.user = user
-        }
-    }
 
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
@@ -67,19 +71,28 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(dicodingSpace, 15f))
         addManyMarker()
     }
-    private val boundsBuilder = LatLngBounds.Builder()
 
     private fun addManyMarker() {
-        viewModel.token.observe(this) {
-            user.token = it
-        }
-        viewModel.getStoriesLocation(user.token)
-        viewModel.storyItem.observe(this) { titik->
-            titik.forEach {
-                val latLng = LatLng(it.lat, it.lon)
-                mMap.addMarker(MarkerOptions().position(latLng).title(it.name).snippet(it.description))
-                boundsBuilder.include(latLng)
+        addviewModel.getUser().observe(this){ it ->
+            val token = "Bearer ${it.token}"
+            viewModel.getStoryLocation(token).observe(this){
+                when(it){
+                    is ApiResult.Loading -> {}
+                    is ApiResult.Success -> showMarker(it.data.listStory)
+                    is ApiResult.Error -> Toast.makeText(this, it.error, Toast.LENGTH_SHORT).show()
+                }
             }
+        }
+    }
+    private fun showMarker(listStory: List<ListStoryItem>) {
+        for (story in listStory) {
+            val latlng = LatLng(story.lat, story.lon)
+            mMap.addMarker(
+                MarkerOptions()
+                    .position(latlng)
+                    .snippet(story.description)
+                    .title(story.name)
+            )
         }
     }
 }

@@ -13,6 +13,7 @@
     <string name="logo">Logo</string>
     <string name="desc">Where programmers share their story, share their lifestyle, share their code. Lets join the fun!</string>
     <string name="login">LOGIN</string>
+    <string name="errorsys">Something went wrong</string>
     <string name="sign_up">SIGN UP</string>
     <string name="camera">camera</string>
     <string name="gallery">gallery</string>
@@ -39,4 +40,7 @@
     <string name="errorPassword">Password is at least 8 characters</string>
     <string name="errorDesc">Description should not be empty</string>
     <string name="title_activity_maps">MapsActivity</string>
+    <string name="timeout">Timeout</string>
+    <string name="reload">Reload</string>
+
 </resources>

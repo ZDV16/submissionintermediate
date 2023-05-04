@@ -27,6 +27,7 @@
     <string name="email">Email</string>
     <string name="confirm">ya</string>
     <string name="negative">tidak</string>
+    <string name="errorsys">Terjadi kesalahan</string>
     <string name="popUp">Mau keluar?</string>
     <string name="regYes">REGISTRASI SUKSES</string>
     <string name="regNo">REGISTRASI GAGAL</string>
@@ -39,4 +40,7 @@
     <string name="etPassword">Setidaknya 8 karakter</string>
     <string name="errorPassword">Password setidaknya 8 karakter</string>
     <string name="errorDesc">Deskripsi tidak boleh kosong</string>
+    <string name="title_activity_maps">MapsActivity</string>
+    <string name="timeout">Timeout</string>
+    <string name="reload">Reload</string>
 </resources>

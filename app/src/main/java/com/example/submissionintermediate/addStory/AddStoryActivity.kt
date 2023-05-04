@@ -17,11 +17,17 @@ import androidx.core.content.ContextCompat
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
+import androidx.lifecycle.ViewModelProvider
 import com.example.submissionintermediate.R
 import com.example.submissionintermediate.databinding.ActivityAddStoryBinding
 import com.example.submissionintermediate.main.MainActivity
+import com.example.submissionintermediate.settings.ApiResult
 import com.example.submissionintermediate.settings.UserPreferences
 import com.example.submissionintermediate.settings.ViewModelFactory
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
 
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
@@ -31,12 +37,11 @@ class AddStoryActivity : AppCompatActivity() {
     private lateinit var binding: ActivityAddStoryBinding
     private var getFile: File? = null
 
-    private val pref by lazy { UserPreferences.getInstance(dataStore) }
-    private val viewModel: AddStoryViewModel by viewModels {
-        ViewModelFactory(pref)
-    }
-    private var token = ""
-    private var desc = ""
+    private lateinit var factory: ViewModelFactory
+    private lateinit var addViewModel: AddStoryViewModel
+
+    var desc =""
+
 
     companion object {
         const val CAMERA_X_RESULT = 200
@@ -72,6 +77,9 @@ class AddStoryActivity : AppCompatActivity() {
         binding = ActivityAddStoryBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        factory = ViewModelFactory.getInstance(this)
+        addViewModel = ViewModelProvider(this, factory)[AddStoryViewModel::class.java]
+
         if (!allPermissionsGranted()) {
             ActivityCompat.requestPermissions(
                 this,
@@ -80,24 +88,12 @@ class AddStoryActivity : AppCompatActivity() {
             )
         }
 
-        setupViewModel()
         uploadStory()
 
         binding.btnCamera.setOnClickListener { startCameraX() }
         binding.btnGallery.setOnClickListener { startGallery() }
 
         supportActionBar?.hide()
-        viewModel.isLoading.observe(this) {
-            showLoading(it)
-        }
-    }
-
-    private fun setupViewModel() {
-        viewModel.getUser().observe(this) { user ->
-            if (user.isLogin) {
-                token = user.token
-            }
-        }
     }
 
     private fun startCameraX() {
@@ -143,6 +139,7 @@ class AddStoryActivity : AppCompatActivity() {
     }
 
     private fun uploadStory() {
+
         binding.btnUpload.setOnClickListener {
             if (binding.tvDescription.text.isEmpty()) {
                 Toast.makeText(this, R.string.errorDesc, Toast.LENGTH_SHORT).show()
@@ -153,19 +150,35 @@ class AddStoryActivity : AppCompatActivity() {
                 Toast.makeText(this, R.string.uploadNo, Toast.LENGTH_SHORT).show()
             }
 
-            getFile?.let { it1 -> viewModel.uploadFile(it1, token, desc) }
-            viewModel.hasil.observe(this) {
-                if (it) {
-                    Toast.makeText(this, R.string.uploadYes, Toast.LENGTH_SHORT).show()
-                    val mainPage = Intent(this@AddStoryActivity, MainActivity::class.java)
-                    startActivity(mainPage)
-                    finish()
+            addViewModel.getUser().observe(this) { it ->
+                val token = "Bearer ${it.token}"
+                val file = reduceFileImage(getFile as File)
+                val desc = "${binding.tvDescription.text}".toRequestBody("text/plain".toMediaTypeOrNull())
+                val reqImgFile = file.asRequestBody("image/*".toMediaTypeOrNull())
+                val imageMultipart: MultipartBody.Part = MultipartBody.Part.createFormData(
+                    "photo", file.name, reqImgFile
+                )
+                addViewModel.getUser().observe(this) {
+                    addViewModel.uploadFile(token, imageMultipart, desc)
+                        .observe(this@AddStoryActivity) {
+                            when (it) {
+                                is ApiResult.Success-> {
+                                    showLoading(false)
+                                    startActivity(Intent(this, MainActivity::class.java))
+                                    Toast.makeText(this, R.string.uploadYes, Toast.LENGTH_SHORT).show()
+                                    finish()
+                                }
+                                is ApiResult.Loading -> {showLoading(true)}
+                                is ApiResult.Error -> {
+                                    showLoading(false)
+                                    Toast.makeText(this, R.string.uploadNo, Toast.LENGTH_SHORT).show()
+                                }
+                            }
+                        }
                 }
             }
-
+            }
         }
-    }
-
     private fun showLoading(isLoading: Boolean) {
         binding.progressBar5.visibility = if (isLoading) View.VISIBLE else View.GONE
     }

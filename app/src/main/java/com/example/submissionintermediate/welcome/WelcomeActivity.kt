@@ -53,6 +53,7 @@ class WelcomeActivity : AppCompatActivity() {
         binding.btnLogin.setOnClickListener {
             val loginPage = Intent(this@WelcomeActivity, LoginActivity::class.java)
             startActivity(loginPage)
+            finish()
         }
         binding.btnRegister.setOnClickListener {
             val registerPage = Intent(this@WelcomeActivity, RegisterActivity::class.java)
@@ -60,9 +61,10 @@ class WelcomeActivity : AppCompatActivity() {
         }
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
         if (backPressedTime + 3000 > System.currentTimeMillis()) {
-            super.onBackPressed()
+            onBackPressedDispatcher.onBackPressed()
             finish()
         } else {
             Toast.makeText(this, "Press back again to leave the app.", Toast.LENGTH_LONG).show()
