@@ -9,7 +9,8 @@ import com.example.submissionintermediate.api.ListStoryItem
 import com.example.submissionintermediate.data.StoryRepository
 
 
-class MainViewModel(private val repo : StoryRepository) : ViewModel() {
-        fun getStory() : LiveData<PagingData<ListStoryItem>> {
-            return repo.getStory().cachedIn(viewModelScope) }
+class MainViewModel(private val repo: StoryRepository) : ViewModel() {
+    fun getStory(): LiveData<PagingData<ListStoryItem>> {
+        return repo.getStory().cachedIn(viewModelScope)
+    }
 }

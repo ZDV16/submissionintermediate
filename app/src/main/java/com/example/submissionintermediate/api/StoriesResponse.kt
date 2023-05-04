@@ -15,6 +15,7 @@ data class StoriesResponse(
     @field:SerializedName("message")
     val message: String
 )
+
 @Parcelize
 data class ListStoryItem(
 
@@ -38,4 +39,4 @@ data class ListStoryItem(
 
     @field:SerializedName("lat")
     val lat: Double
-) :Parcelable
+) : Parcelable

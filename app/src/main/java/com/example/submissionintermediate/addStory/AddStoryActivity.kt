@@ -10,7 +10,6 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -22,7 +21,6 @@ import com.example.submissionintermediate.R
 import com.example.submissionintermediate.databinding.ActivityAddStoryBinding
 import com.example.submissionintermediate.main.MainActivity
 import com.example.submissionintermediate.settings.ApiResult
-import com.example.submissionintermediate.settings.UserPreferences
 import com.example.submissionintermediate.settings.ViewModelFactory
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -40,7 +38,7 @@ class AddStoryActivity : AppCompatActivity() {
     private lateinit var factory: ViewModelFactory
     private lateinit var addViewModel: AddStoryViewModel
 
-    var desc =""
+    var desc = ""
 
 
     companion object {
@@ -153,7 +151,8 @@ class AddStoryActivity : AppCompatActivity() {
             addViewModel.getUser().observe(this) { it ->
                 val token = "Bearer ${it.token}"
                 val file = reduceFileImage(getFile as File)
-                val desc = "${binding.tvDescription.text}".toRequestBody("text/plain".toMediaTypeOrNull())
+                val desc =
+                    "${binding.tvDescription.text}".toRequestBody("text/plain".toMediaTypeOrNull())
                 val reqImgFile = file.asRequestBody("image/*".toMediaTypeOrNull())
                 val imageMultipart: MultipartBody.Part = MultipartBody.Part.createFormData(
                     "photo", file.name, reqImgFile
@@ -162,23 +161,30 @@ class AddStoryActivity : AppCompatActivity() {
                     addViewModel.uploadFile(token, imageMultipart, desc)
                         .observe(this@AddStoryActivity) {
                             when (it) {
-                                is ApiResult.Success-> {
+                                is ApiResult.Success -> {
                                     showLoading(false)
                                     startActivity(Intent(this, MainActivity::class.java))
-                                    Toast.makeText(this, R.string.uploadYes, Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(this, R.string.uploadYes, Toast.LENGTH_SHORT)
+                                        .show()
                                     finish()
                                 }
-                                is ApiResult.Loading -> {showLoading(true)}
+
+                                is ApiResult.Loading -> {
+                                    showLoading(true)
+                                }
+
                                 is ApiResult.Error -> {
                                     showLoading(false)
-                                    Toast.makeText(this, R.string.uploadNo, Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(this, R.string.uploadNo, Toast.LENGTH_SHORT)
+                                        .show()
                                 }
                             }
                         }
                 }
             }
-            }
         }
+    }
+
     private fun showLoading(isLoading: Boolean) {
         binding.progressBar5.visibility = if (isLoading) View.VISIBLE else View.GONE
     }

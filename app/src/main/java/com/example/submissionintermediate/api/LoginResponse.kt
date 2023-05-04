@@ -22,7 +22,9 @@ data class LoginRequest(
 
     @SerializedName("password")
     @Expose
-    val password: String? = null)
+    val password: String? = null
+)
+
 data class LoginResult(
 
     @field:SerializedName("name")

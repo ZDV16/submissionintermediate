@@ -5,7 +5,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
@@ -17,7 +16,6 @@ import com.example.submissionintermediate.databinding.ActivityLoginBinding
 import com.example.submissionintermediate.main.MainActivity
 import com.example.submissionintermediate.settings.ApiResult
 import com.example.submissionintermediate.settings.UserModel
-import com.example.submissionintermediate.settings.UserPreferences
 import com.example.submissionintermediate.settings.ViewModelFactory
 
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
@@ -42,9 +40,12 @@ class LoginActivity : AppCompatActivity() {
 
         supportActionBar?.hide()
     }
+
     private fun loginClicked() {
-        val creds = LoginRequest(binding.etUsernameLogin.text.toString(),
-        binding.etPasswordLogin.text.toString())
+        val creds = LoginRequest(
+            binding.etUsernameLogin.text.toString(),
+            binding.etPasswordLogin.text.toString()
+        )
         showLoading(true)
 
         viewModel.goLogin(creds).observe(this) {
@@ -53,19 +54,23 @@ class LoginActivity : AppCompatActivity() {
                     showLoading(false)
                     Toast.makeText(this, R.string.loginYes, Toast.LENGTH_SHORT).show()
                     val response = it.data
-                    saveUserData(UserModel(
-                        response.loginResult?.token.toString(),
-                        true
-                        ))
+                    saveUserData(
+                        UserModel(
+                            response.loginResult.token.toString(),
+                            true
+                        )
+                    )
                     val mainPage = Intent(this@LoginActivity, MainActivity::class.java)
                     startActivity(mainPage)
                     finish()
                 }
+
                 is ApiResult.Loading -> showLoading(true)
                 is ApiResult.Error -> {
                     Toast.makeText(this, R.string.loginNo, Toast.LENGTH_SHORT).show()
                     showLoading(false)
                 }
+
                 else -> {
                     Toast.makeText(this, R.string.errorsys, Toast.LENGTH_SHORT).show()
                     showLoading(false)
@@ -75,7 +80,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun saveUserData(user: UserModel) {
-       viewModel.saveUser(user)
+        viewModel.saveUser(user)
     }
 
     private fun showLoading(isLoading: Boolean) {

@@ -1,10 +1,9 @@
 package com.example.submissionintermediate.maps
 
 import android.content.Context
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
-import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
@@ -12,20 +11,15 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.submissionintermediate.R
 import com.example.submissionintermediate.addStory.AddStoryViewModel
 import com.example.submissionintermediate.api.ListStoryItem
-
+import com.example.submissionintermediate.databinding.ActivityMapsBinding
+import com.example.submissionintermediate.settings.ApiResult
+import com.example.submissionintermediate.settings.ViewModelFactory
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
-import com.example.submissionintermediate.databinding.ActivityMapsBinding
-import com.example.submissionintermediate.main.MainViewModel
-import com.example.submissionintermediate.settings.ApiResult
-import com.example.submissionintermediate.settings.UserModel
-import com.example.submissionintermediate.settings.UserPreferences
-import com.example.submissionintermediate.settings.ViewModelFactory
-import com.google.android.gms.maps.model.LatLngBounds
 
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
 
@@ -33,9 +27,9 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private lateinit var mMap: GoogleMap
     private lateinit var binding: ActivityMapsBinding
-    private lateinit var viewModel : MapsViewModel
-    private lateinit var addviewModel : AddStoryViewModel
-    private lateinit var factory : ViewModelFactory
+    private lateinit var viewModel: MapsViewModel
+    private lateinit var addviewModel: AddStoryViewModel
+    private lateinit var factory: ViewModelFactory
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -73,10 +67,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private fun addManyMarker() {
-        addviewModel.getUser().observe(this){ it ->
+        addviewModel.getUser().observe(this) { it ->
             val token = "Bearer ${it.token}"
-            viewModel.getStoryLocation(token).observe(this){
-                when(it){
+            viewModel.getStoryLocation(token).observe(this) {
+                when (it) {
                     is ApiResult.Loading -> {}
                     is ApiResult.Success -> showMarker(it.data.listStory)
                     is ApiResult.Error -> Toast.makeText(this, it.error, Toast.LENGTH_SHORT).show()
@@ -84,6 +78,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             }
         }
     }
+
     private fun showMarker(listStory: List<ListStoryItem>) {
         for (story in listStory) {
             val latlng = LatLng(story.lat, story.lon)

@@ -1,24 +1,16 @@
 package com.example.submissionintermediate.options
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.provider.Settings
-import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.preferencesDataStore
 import androidx.lifecycle.ViewModelProvider
 import com.example.submissionintermediate.R
 import com.example.submissionintermediate.databinding.ActivityOptionsBinding
-import com.example.submissionintermediate.login.LoginViewModel
 import com.example.submissionintermediate.main.MainActivity
 import com.example.submissionintermediate.settings.SessionListener
-import com.example.submissionintermediate.settings.UserModel
-import com.example.submissionintermediate.settings.UserPreferences
 import com.example.submissionintermediate.settings.ViewModelFactory
 
 
