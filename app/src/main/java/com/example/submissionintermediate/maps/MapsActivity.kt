@@ -1,12 +1,11 @@
 package com.example.submissionintermediate.maps
 
-import android.content.Context
+import android.content.ContentValues.TAG
+import android.content.res.Resources
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.preferencesDataStore
 import androidx.lifecycle.ViewModelProvider
 import com.example.submissionintermediate.R
 import com.example.submissionintermediate.addStory.AddStoryViewModel
@@ -19,9 +18,9 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.android.gms.maps.model.MarkerOptions
 
-private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
@@ -60,10 +59,11 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             MarkerOptions()
                 .position(dicodingSpace)
                 .title("Dicoding Space")
-                .snippet("Batik Kumeli No.50")
+                .snippet("Thank you Dicoding and Bangkit! <3")
         )
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(dicodingSpace, 15f))
         addManyMarker()
+        setMapStyle()
     }
 
     private fun addManyMarker() {
@@ -79,6 +79,18 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
+    private fun setMapStyle() {
+        try {
+            val success =
+                mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.map_style))
+            if (!success) {
+                Log.e(TAG, "Style parsing failed.")
+            }
+        } catch (exception: Resources.NotFoundException) {
+            Log.e(TAG, "Can't find style. Error: ", exception)
+        }
+    }
+
     private fun showMarker(listStory: List<ListStoryItem>) {
         for (story in listStory) {
             val latlng = LatLng(story.lat, story.lon)
@@ -91,3 +103,4 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 }
+

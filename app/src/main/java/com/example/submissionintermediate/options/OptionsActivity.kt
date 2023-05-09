@@ -10,7 +10,6 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.submissionintermediate.R
 import com.example.submissionintermediate.databinding.ActivityOptionsBinding
 import com.example.submissionintermediate.main.MainActivity
-import com.example.submissionintermediate.settings.SessionListener
 import com.example.submissionintermediate.settings.ViewModelFactory
 
 
@@ -45,8 +44,6 @@ class OptionsActivity : AppCompatActivity() {
             builder.setMessage(R.string.popUp)
             builder.setCancelable(false)
             builder.setPositiveButton(R.string.confirm) { dialog, which ->
-                val loginSession = SessionListener(this)
-                loginSession.logoutSession()
                 viewModel.logout()
                 startActivity(Intent(this, MainActivity::class.java))
                 finish()

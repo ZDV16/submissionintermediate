@@ -36,7 +36,7 @@ class RegisterActivity : AppCompatActivity() {
             Toast.makeText(this, R.string.errorPassword, Toast.LENGTH_SHORT).show()
         } else {
             showLoading(true)
-            viewModel.doRegister(
+            viewModel.postRegister(
                 binding.etNama.text.toString(),
                 binding.etEmail.text.toString(),
                 binding.etPassword.text.toString()
@@ -49,8 +49,8 @@ class RegisterActivity : AppCompatActivity() {
 
                     is ApiResult.Loading -> showLoading(true)
                     is ApiResult.Error -> {
-                        Toast.makeText(this, R.string.regNo, Toast.LENGTH_SHORT).show()
                         showLoading(false)
+                        Toast.makeText(this, R.string.regNo, Toast.LENGTH_SHORT).show()
                     }
                 }
             }

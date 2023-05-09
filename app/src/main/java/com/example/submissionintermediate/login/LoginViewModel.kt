@@ -8,7 +8,7 @@ import com.example.submissionintermediate.settings.UserModel
 import kotlinx.coroutines.launch
 
 class LoginViewModel(private val repo: StoryRepository) : ViewModel() {
-    fun goLogin(loginReq: LoginRequest) = repo.requestLogin(loginReq)
+    fun postLogin(loginReq: LoginRequest) = repo.requestLogin(loginReq)
     fun saveUser(userModel: UserModel) {
         viewModelScope.launch {
             repo.saveUserData(userModel)

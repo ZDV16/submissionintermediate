@@ -7,7 +7,6 @@ import com.example.submissionintermediate.api.ListStoryItem
 import com.example.submissionintermediate.settings.UserPreferences
 import kotlinx.coroutines.flow.first
 
-
 class StorySourcePaging(
     private val apiService: ApiService,
     private val pref: UserPreferences

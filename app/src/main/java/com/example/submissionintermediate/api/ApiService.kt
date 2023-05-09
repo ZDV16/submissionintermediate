@@ -20,12 +20,7 @@ interface ApiService {
         @Header("Authorization") token: String,
         @Query("page") page: Int? = null,
         @Query("size") size: Int? = null,
-    ): StoriesResponse
-
-    @GET("/v1/stories")
-    suspend fun getStoriesLocation(
-        @Header("Authorization") auth: String,
-        @Query("location") location: Int = 1,
+        @Query("location") location: Int? = null
     ): StoriesResponse
 
     @Multipart

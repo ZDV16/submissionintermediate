@@ -28,7 +28,7 @@ class StoriesAdapter : PagingDataAdapter<ListStoryItem, StoriesAdapter.ViewHolde
         }
     }
 
-    class ViewHolder(private val binding: ItemStoriesBinding) :
+    class ViewHolder(val binding: ItemStoriesBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(story: ListStoryItem) {
             with(binding) {
@@ -41,14 +41,14 @@ class StoriesAdapter : PagingDataAdapter<ListStoryItem, StoriesAdapter.ViewHolde
             }
             itemView.setOnClickListener {
                 val intent = Intent(itemView.context, DetailActivity::class.java).apply {
-                    putExtra(DetailActivity.EXTRA_NAME, story)
+                    putExtra(DetailActivity.EXTRA_DATA, story)
                 }
                 val optionsCompat: ActivityOptionsCompat =
                     ActivityOptionsCompat.makeSceneTransitionAnimation(
                         itemView.context as Activity,
                         Pair(binding.imgItemPhoto, "image"),
                         Pair(binding.tvItemName, "name"),
-                        Pair(binding.tvItemDescription, "deskripsi"),
+                        Pair(binding.tvItemDescription, "desc"),
                     )
                 it.context.startActivity(intent, optionsCompat.toBundle())
             }

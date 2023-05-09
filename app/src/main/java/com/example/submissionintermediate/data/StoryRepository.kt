@@ -38,7 +38,7 @@ class StoryRepository(private val pref: UserPreferences, private val apiService:
     fun getStoryLocation(token: String): LiveData<ApiResult<StoriesResponse>> = liveData {
         emit(ApiResult.Loading)
         try {
-            val response = apiService.getStoriesLocation(token, 1)
+            val response = apiService.getStories(token, location = 1)
             emit(ApiResult.Success(response))
         } catch (e: Exception) {
             Log.d("Signup", e.message.toString())

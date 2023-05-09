@@ -1,7 +1,6 @@
 package com.example.submissionintermediate.addStory
 
 import android.Manifest
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
@@ -13,9 +12,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.preferencesDataStore
 import androidx.lifecycle.ViewModelProvider
 import com.example.submissionintermediate.R
 import com.example.submissionintermediate.databinding.ActivityAddStoryBinding
@@ -28,17 +24,13 @@ import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
 
-private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
-
 class AddStoryActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityAddStoryBinding
     private var getFile: File? = null
 
     private lateinit var factory: ViewModelFactory
-    private lateinit var addViewModel: AddStoryViewModel
-
-    var desc = ""
+    private lateinit var viewModel: AddStoryViewModel
 
 
     companion object {
@@ -76,7 +68,7 @@ class AddStoryActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         factory = ViewModelFactory.getInstance(this)
-        addViewModel = ViewModelProvider(this, factory)[AddStoryViewModel::class.java]
+        viewModel = ViewModelProvider(this, factory)[AddStoryViewModel::class.java]
 
         if (!allPermissionsGranted()) {
             ActivityCompat.requestPermissions(
@@ -137,28 +129,24 @@ class AddStoryActivity : AppCompatActivity() {
     }
 
     private fun uploadStory() {
-
         binding.btnUpload.setOnClickListener {
             if (binding.tvDescription.text.isEmpty()) {
                 Toast.makeText(this, R.string.errorDesc, Toast.LENGTH_SHORT).show()
-            } else {
-                desc = binding.tvDescription.text.toString()
             }
             if (getFile == null) {
                 Toast.makeText(this, R.string.uploadNo, Toast.LENGTH_SHORT).show()
             }
+            if (binding.tvDescription.text.isNotEmpty() && getFile != null) {
+                viewModel.getUser().observe(this) { getToken ->
+                    val token = "Bearer ${getToken.token}"
+                    val file = reduceFileImage(getFile as File)
+                    val desc =
+                        "${binding.tvDescription.text}".toRequestBody("text/plain".toMediaTypeOrNull())
+                    val reqImgFile = file.asRequestBody("image/*".toMediaTypeOrNull())
+                    val imageMultipart: MultipartBody.Part =
+                        MultipartBody.Part.createFormData("photo", file.name, reqImgFile)
 
-            addViewModel.getUser().observe(this) { it ->
-                val token = "Bearer ${it.token}"
-                val file = reduceFileImage(getFile as File)
-                val desc =
-                    "${binding.tvDescription.text}".toRequestBody("text/plain".toMediaTypeOrNull())
-                val reqImgFile = file.asRequestBody("image/*".toMediaTypeOrNull())
-                val imageMultipart: MultipartBody.Part = MultipartBody.Part.createFormData(
-                    "photo", file.name, reqImgFile
-                )
-                addViewModel.getUser().observe(this) {
-                    addViewModel.uploadFile(token, imageMultipart, desc)
+                    viewModel.uploadFile(token, imageMultipart, desc)
                         .observe(this@AddStoryActivity) {
                             when (it) {
                                 is ApiResult.Success -> {

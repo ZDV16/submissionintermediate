@@ -21,7 +21,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var adapter: StoriesAdapter
     private lateinit var viewModel: MainViewModel
-    private lateinit var addviewModel: AddStoryViewModel
+    private lateinit var addStoryViewModel: AddStoryViewModel
     private lateinit var factory: ViewModelFactory
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,7 +31,7 @@ class MainActivity : AppCompatActivity() {
 
         factory = ViewModelFactory.getInstance(this)
         viewModel = ViewModelProvider(this, factory)[MainViewModel::class.java]
-        addviewModel = ViewModelProvider(this, factory)[AddStoryViewModel::class.java]
+        addStoryViewModel = ViewModelProvider(this, factory)[AddStoryViewModel::class.java]
 
         setupViewModel()
 
@@ -46,7 +46,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupViewModel() {
-        addviewModel.getUser().observe(this) { user ->
+        addStoryViewModel.getUser().observe(this) { user ->
             if (user.isLogin) {
                 showRecyclerView()
                 showList()
@@ -67,7 +67,7 @@ class MainActivity : AppCompatActivity() {
         binding.rvListStory.adapter = adapter.withLoadStateFooter(
             footer = LoadingStoryAdapter { adapter.retry() }
         )
-        viewModel.getStory().observe(this@MainActivity) {
+        viewModel.getStories().observe(this@MainActivity) {
             adapter.submitData(lifecycle, it)
         }
     }

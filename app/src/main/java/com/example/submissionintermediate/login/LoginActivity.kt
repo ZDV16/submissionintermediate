@@ -48,7 +48,7 @@ class LoginActivity : AppCompatActivity() {
         )
         showLoading(true)
 
-        viewModel.goLogin(creds).observe(this) {
+        viewModel.postLogin(creds).observe(this) {
             when (it) {
                 is ApiResult.Success -> {
                     showLoading(false)
@@ -56,7 +56,7 @@ class LoginActivity : AppCompatActivity() {
                     val response = it.data
                     saveUserData(
                         UserModel(
-                            response.loginResult.token.toString(),
+                            response.loginResult.token,
                             true
                         )
                     )
